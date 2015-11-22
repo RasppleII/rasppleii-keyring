@@ -3,6 +3,8 @@ Section: misc
 Priority: important
 Maintainer: T. Joseph Carter <tjcarter@blocksfree.com>
 Build-Depends: debhelper (>> 7)
+Vcs-Git: https://github.com/RasppleII/rasppleii-keyring.git
+Vcs-Browser: https://github.com/RasppleII/rasppleii-keyring
 Standards-Version: 3.9.2
 
 Package: rasppleii-keyring
