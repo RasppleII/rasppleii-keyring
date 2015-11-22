@@ -1,0 +1,13 @@
+Source: rasppleii-keyring
+Section: misc
+Priority: important
+Maintainer: T. Joseph Carter <tjcarter@blocksfree.com>
+Build-Depends: debhelper (>> 7)
+Standards-Version: 3.9.2
+
+Package: rasppleii-keyring
+Architecture: all
+Depends: gnupg, ${misc:Depends}
+Description: GnuPG keyring for the Raspple II project
+ The Raspple II project digitally signs its packages and archive.  This package
+ contains the keyring.

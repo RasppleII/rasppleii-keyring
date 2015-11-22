@@ -1,0 +1,2 @@
+77a2ebd3bcfb3309bf326d2836da9e38b99f120b02cb083f3963ea0e8790fb02  rasppleii-keyring.gpg
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  rasppleii-keyring-remove.gpg
