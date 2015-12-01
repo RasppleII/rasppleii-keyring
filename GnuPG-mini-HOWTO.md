@@ -67,3 +67,60 @@ are a problem.
 If you've followed everything so far, you can use public key cryptography.
 You still need to learn the some commands, but you already understand the
 basics.
+
+
+## Signatures, trust, and paranoia
+
+Okay, so you download a program off the internet.  How do you know your
+program was downloaded intact?  How do you know it wasn't truncated in
+transit, or corrupted?
+
+In the old days of protocols like X/Y/Zmodem, the protocol would verify CRC32
+values for each block.  The modern equivalent is a file containing magic
+numbers called a *message hash* for each file.  We used to use MD5 or SHA1 for
+this, but they're no longer regarded as secure enough.  At this writing,
+SHA256 is a better choice.
+
+Anyway, so you download the program and a .sha256sums file that goes with it.
+And you run a tool that gives you the sha256sum for the program you
+downloaded.  It matches.  But how do you know that someone didn't hack the
+server, infect the program with a virus, and then modify the sha256sums file
+to match the version with a virus?
+
+It sounds paranoid, but that's happened before.  Multiple times, in fact!
+
+
+### The digital signature
+
+It turns out that the algorithms that we use in public key encryption can also
+generate a "magic number" hash of a message or file and a person's private key
+in such a way that a public key can verify the hash.  It's like encrypting a
+message to the world, except the contents are left unencrypted.  If even one
+byte of the message is modified, the signature won't match.
+
+You will typically see GnuPG signatures in files ending with `.asc` or `.gpg`,
+and you need to have the person's public key in order to verify these files.
+We'll talk about how you can get a person's public key later on.
+
+
+### The web of trust
+
+There's one other problem.  Just as soon as you learn about the `--gen-key`
+command in a minute, you can create a key that claims to belong to anybody you
+want.  You could claim to be president@whitehouse.gov if you wanted to.  So
+how do you know whose key belongs to whom?
+
+There's a few ways to do this, and they run a wide gamut in terms of trust.
+First of all, you can email a person at the email address on their key and ask
+them to verify their public key.  If they do, you still don't know for certain
+that they are who they claim to be, but at least you can be reasonably sure
+that the email address is owned by the same person as the key.  That might be
+good enough for your needs if the person's an established part of a community,
+even if you don't personally know them.
+
+Of course if you do personally know them, at least enough that you can say
+they are who they claim to be, you can certify their key with your own by
+generating a key signature.  This doesn't imply any trust of the person, just
+that the key they were using when you signed it belongs to them.  Typically
+they will sign yours in kind.
+
