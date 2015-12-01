@@ -102,6 +102,16 @@ You will typically see GnuPG signatures in files ending with `.asc` or `.gpg`,
 and you need to have the person's public key in order to verify these files.
 We'll talk about how you can get a person's public key later on.
 
+The Raspple II archive (as well as Raspbian and Debian archives) have their
+index files signed this way, and `apt` will verify the signature on the index.
+That prevents tampering with the index.  And the index contains secure hashes
+for the rest of the files.  In addition, any time a developer uploads a
+package to the Raspple II archive, it includes an index of what the developer
+uploaded which is signed by a developer.  This model, developed by the Debian
+project, allows for a large group of people from around the world to work
+together despite being located in different cities and even countries, yet
+maintain integrity of the entire project.
+
 
 ### The web of trust
 
@@ -124,3 +134,29 @@ generating a key signature.  This doesn't imply any trust of the person, just
 that the key they were using when you signed it belongs to them.  Typically
 they will sign yours in kind.
 
+From there, anyone who trusts your judgment (and your key) may trust the key
+of anyone whose key you have signed.  This generates a web of trust as more
+and more people sign each other's keys.
+
+
+### Signing parties
+
+When a bunch of people get together with their public keys, they can have a
+signing party.  If you attend one, be prepared to provide information about
+your public key and some form of identification to prove that you are who you
+claim to be.  Typically, the person will sign your key and send their
+signature to your email address.  That way they have proven not only your
+identity, but that your email address is really your own.
+
+You do the same for them.  Then when everybody checks their email, they can
+import the new signatures into their keys and publish changes.  This is a
+great way to build the web of trust quickly.  Apple // users could build a
+pretty good web of trust quickly by having a signing party at KFest or the
+other regional events.  It might only be of real interest to Raspple II
+developers at the moment, but it's always good to use public key encryption
+and you never know when it will start being useful to have it.
+
+The Debian project, ultimately the origin of the operating system Raspple II
+uses, requires that every one of its prospective new developers have a key
+that has been signed by an existing developer.  Debian developers have key
+signing parties any time a group of them gets together.
