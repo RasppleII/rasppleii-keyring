@@ -260,3 +260,17 @@ eventually generate enough random bytes to finish creating your key.
 For the record, you will not find this key (524871B7 or AEB489D7) in any
 public keyring or on any public server.  It no longer exists.
 
+Now, this last bit cannot be stated enough:
+
+**DO NOT LOSE THE PASSPHRASE FOR YOUR KEY**
+
+If you ever cannot remember your passphrase, your key is useless.  And note it
+is a passphrase, not a password.  It can be anything you want it to be, as
+long or as short as you're willing to type when you unlock the key.  Pick
+something memorable, but not easy to guess.  An arbitrary string of words is
+just as secure as a password including letters, numbers, punctuation, the
+blood of your first-born child, etc.  Just as long as you know it, you won't
+forget it, and nobody else knows it.  Over the years, your author has used
+passphrases ranging from song lyrics and memorable quotes to bible verses and
+arbitrarily randomly chosen words.  Whatever works for you.
+
