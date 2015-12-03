@@ -1,7 +1,18 @@
 # GnuPG mini-HOWTO for Raspple II users
 
 
-## What is public key cryptography
+## Understanding how public key encryption works
+
+You don't actually have to understand the complex mathematics or have
+discussions about Alice and Bob and Charlie to understand how public key
+encryption software like GnuPG works.  It can be explained simply, and one
+major reason that it is not used more often is that so few people take the
+time to do that.
+
+Hopfeully we will correct that here.
+
+
+### Traditional cryptography and its limitation
 
 With traditional encryption methods, you use one key.  You encrypt with the
 key at one end, and someone else uses the same key at the other to decrypt.
@@ -9,7 +20,10 @@ This requires that you somehow have a means of distributing the key only to
 people who should have it.  If anyone else is ever able to obtain the key,
 they have access to all messages sent using that key no matter when they were
 sent.  The only secure way to share such a key is in person, which doesn't
-work well if the two people are half a world apart.
+work well if such an exchange is difficult or impossible.
+
+
+### The solution: Public key cryptography
 
 With public key cryptography, this problem is solved by each person having two
 mathematically related keys.  The first key is called *private*.  It's a
@@ -31,115 +45,67 @@ private key.
 
 ### Digital signatures
 
-You could theoretically encrypt a message with your private key.  The result
-would be that it could only be decrypted with your public key.  But that
-doesn't make a whole lot of sense because absolutely everybody has access to
-your public key!
+So now you can send a message to anyone whose public key you have, and only
+they can read it.  How do they know *you* sent it?  It turns out you can
+generate a message hash (similar to a SHA sum) with your private key.  A
+person with your public key can verify that only your private key could have
+generated the hash.  Like a SHA sum, changing one byte of the message will
+invalidate the hash, so anyone receiving some digital content along with a
+digital signature can be sure that you sent it and it arrived intact and
+unmodified.
 
-What does make sense is if you could use your private key to create a secure
-magic number for your message to prove that you and only you could've written
-it.  These magic numbers exist--they're made with something called message
-digest or hash algorithms.  SHA256 is one such hash you might have heard of
-before.  Well, your private key can generate something similar to that, only
-in addition to hashing the message, it also hashes your identity with your
-private key in a way that only your public key can verify.  We call that a
-digital signature.
-
-You get two-way secure communication by combining these two concepts.  A
-sender will use the recipient's public key to encrypt a message, and their own
-private key to sign it.  When the recipient gets the message, they check the
-signature (requires the sender's public key) to verify who sent it, and their
-own private key to decrypt the message.
+When this feature is combined with encryption with someone else's public key,
+it allows you to send them a message that only they can decrypt, and that only
+you could have sent.  If they have your public key to verify this, then they
+can reply in turn knowing that only you can read the reply and in turn you
+will know they sent it.  You and your correspondent need never have actually
+met and may indeed be half a world apart and still accomplish this.  All that
+remains is for the two of you to be somehow confident that the other person is
+who they claim to be.
 
 
-## Signatures, trust, and paranoia
+### The web of trust and keysinging parties
 
-Okay, so you download a program off the internet.  How do you know your
-program was downloaded intact?  How do you know it wasn't truncated in
-transit, or corrupted?
+That last problem can't be solved by software alone.  How do you know that a
+key belongs to the person in question?  The best way we've got to assure that
+is for someone to verify!  Obviously it's best if you can do that yourself,
+but if you and they are half a world apart and don't know each other, that
+won't help you much.
 
-In the old days of protocols like X/Y/Zmodem, the protocol would verify CRC32
-values for each block.  The modern equivalent is a file containing magic
-numbers called a *message hash* for each file.  We used to use MD5 or SHA1 for
-this, but they're no longer regarded as secure enough.  At this writing,
-SHA256 is a better choice.
+The best way is for people who either know you or have checked your ID to
+vouch for you.  This is often done at keysigning parties.  A keysigning party
+is just what it sounds like: A bunch of folks get together and they bring some
+generally acceptable form of ID with them, along with their key information.
+You do likewise.  Laptops and other tablets are common accessories for
+keysigning parties because you can pull keys right off of Internet key servers
+if they've been uploaded to such places.
 
-Anyway, so you download the program and a .sha256sums file that goes with it.
-And you run a tool that gives you the sha256sum for the program you
-downloaded.  It matches.  But how do you know that someone didn't hack the
-server, infect the program with a virus, and then modify the sha256sums file
-to match the version with a virus?
+So you attend a keysigning party or otherwise have a key belonging to a person
+whose identity you know or have verified, now what?  Well, the key will have
+one or more email addresses associated with it.  You sign the key with your
+own, and then you email it to them at the preferred email address on the key.
+This extra step of emailing the signature to them verifies that they actually
+own the email address connected to the key.  You couldn't do that if you just
+uploaded the signature to an Internet key server.
 
-It sounds paranoid, but that's happened before.  Multiple times, in fact!
+A key that is widely signed, or signed by people who have a reputation for
+care in signing keys (for example the Debian project insists that all
+developers have their keys signed by another developer who has verified their
+identity in person), might almost or just as good in your mind as one you have
+signed yourself.  Or if the key is known to belong to a public personage, that
+may be sufficient.  Or even perhaps if you don't care what the person's name
+is as long as they are the person associated with certain online accounts.
 
+Ultimately how much *you* trust a key is up to you.  It's not an exaggeration
+that political activists living in countries where such activism is dangerous
+use this technology.  If you were in such a situation, being absolutely
+certain of every aspect of a person's identity might be really important and a
+matter of life and death.
 
-### The digital signature
+On the other hand, consider the digital signatures on Linux kernel releases.
+You can verify that they've been signed by the same person for the past couple
+of decades.  That person has always given the name Linus Torvalds.  If it were
+ever discovered that had been an alias from the start, would it make that any
+less his identity?  Some argue it would.  Your author is not one of those
+people.
 
-It turns out that the algorithms that we use in public key encryption can also
-generate a "magic number" hash of a message or file and a person's private key
-in such a way that a public key can verify the hash.  It's like encrypting a
-message to the world, except the contents are left unencrypted.  If even one
-byte of the message is modified, the signature won't match.
-
-You will typically see GnuPG signatures in files ending with `.asc` or `.gpg`,
-and you need to have the person's public key in order to verify these files.
-We'll talk about how you can get a person's public key later on.
-
-The Raspple II archive (as well as Raspbian and Debian archives) have their
-index files signed this way, and `apt` will verify the signature on the index.
-That prevents tampering with the index.  And the index contains secure hashes
-for the rest of the files.  In addition, any time a developer uploads a
-package to the Raspple II archive, it includes an index of what the developer
-uploaded which is signed by a developer.  This model, developed by the Debian
-project, allows for a large group of people from around the world to work
-together despite being located in different cities and even countries, yet
-maintain integrity of the entire project.
-
-
-### The web of trust
-
-There's one other problem.  Just as soon as you learn about the `--gen-key`
-command in a minute, you can create a key that claims to belong to anybody you
-want.  You could claim to be president@whitehouse.gov if you wanted to.  So
-how do you know whose key belongs to whom?
-
-There's a few ways to do this, and they run a wide gamut in terms of trust.
-First of all, you can email a person at the email address on their key and ask
-them to verify their public key.  If they do, you still don't know for certain
-that they are who they claim to be, but at least you can be reasonably sure
-that the email address is owned by the same person as the key.  That might be
-good enough for your needs if the person's an established part of a community,
-even if you don't personally know them.
-
-Of course if you do personally know them, at least enough that you can say
-they are who they claim to be, you can certify their key with your own by
-generating a key signature.  This doesn't imply any trust of the person, just
-that the key they were using when you signed it belongs to them.  Typically
-they will sign yours in kind.
-
-From there, anyone who trusts your judgment (and your key) may trust the key
-of anyone whose key you have signed.  This generates a web of trust as more
-and more people sign each other's keys.
-
-
-### Signing parties
-
-When a bunch of people get together with their public keys, they can have a
-signing party.  If you attend one, be prepared to provide information about
-your public key and some form of identification to prove that you are who you
-claim to be.  Typically, the person will sign your key and send their
-signature to your email address.  That way they have proven not only your
-identity, but that your email address is really your own.
-
-You do the same for them.  Then when everybody checks their email, they can
-import the new signatures into their keys and publish changes.  This is a
-great way to build the web of trust quickly.  Apple // users could build a
-pretty good web of trust quickly by having a signing party at KFest or the
-other regional events.  It might only be of real interest to Raspple II
-developers at the moment, but it's always good to use public key encryption
-and you never know when it will start being useful to have it.
-
-The Debian project, ultimately the origin of the operating system Raspple II
-uses, requires that every one of its prospective new developers have a key
-that has been signed by an existing developer.  Debian developers have key
-signing parties any time a group of them gets together.
