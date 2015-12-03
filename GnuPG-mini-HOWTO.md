@@ -109,3 +109,154 @@ ever discovered that had been an alias from the start, would it make that any
 less his identity?  Some argue it would.  Your author is not one of those
 people.
 
+
+## Keys 101
+
+Before you can do anything with GnuPG, you need a key.  You'll notice we're
+skipping installation.  On a Linux box, you'll likely use your Linux package
+manager to install GnuPG.  On any other system, you'll want to go over to the
+GnuPG website <http://gnupg.org/> and download the binary or source release
+for your system and compile or install it as necessary.  This document isn't
+big enough to cover them all, so we're going to assume you can handle it.  We
+will be using the command-line GnuPG program, either gpg or gpg2 (it doesn't
+matter which.)
+
+
+## Creating a key
+
+Before you can do much else, you'll need a key.  Let's create one:
+
+```bash
+gpg --gen-key
+```
+
+Again, you can use `gpg2 --gen-key` as the two programs are interchangeable.
+Your author has gpg2 on a Mac, you can use whatever you have installed.  The
+output you'll get is almost identical, it's just that gpg2 has more
+dependencies and interconnects to other programs more easily.
+
+Here's the output on a Mac:
+
+```
+tjcarter@amaya:~$ gpg2 --gen-key
+gpg (GnuPG) 2.0.28; Copyright (C) 2015 Free Software Foundation, Inc.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+gpg: directory `/Users/tjcarter/.gnupg' created
+gpg: new configuration file `/Users/tjcarter/.gnupg/gpg.conf' created
+gpg: WARNING: options in `/Users/tjcarter/.gnupg/gpg.conf' are not yet active during this run
+gpg: keyring `/Users/tjcarter/.gnupg/secring.gpg' created
+gpg: keyring `/Users/tjcarter/.gnupg/pubring.gpg' created
+Please select what kind of key you want:
+   (1) RSA and RSA (default)
+   (2) DSA and Elgamal
+   (3) DSA (sign only)
+   (4) RSA (sign only)
+Your selection?g
+```
+
+The default is RSA for signing and RSA for encrypting.  At the time of
+writing, that is your best bet for a secure key.  If you live in a country
+where it is illegal to use encryption, this document will probably be declared
+illegal if your author does not advise you to select a sign-only option.
+
+Actually, on second thought, it will probably be declared illegal anyway.
+Pick the RSA/RSA default and get busy overthrowing the oppressive tyrants
+already.  :)
+
+
+```
+Your selection? 1
+RSA keys may be between 1024 and 4096 bits long.
+What keysize do you want? (2048)g
+```
+
+At the time of writing, 2048 is considered secure.  Something that may be
+useful for you to know is that barring any exploit in the algorithm, each new
+bit doubles the difficulty in cracking the key.  So if 1024 bits is the
+minimum, 1025 is twice as strong.  And 1026 bits is four times as strong.  You
+probably should be aware that 1024 bit RSA has been defeated before.  Current
+computers probably can't defeat 2048 bit RSA, barring whatever the NSA has
+under their hats.
+
+Your author is admittedly a bit paranoid and doesn't like generating new keys
+all the time, so 4096 it will be.
+
+```
+Please specify how long the key should be valid.
+         0 = key does not expire
+      <n>  = key expires in n days
+      <n>w = key expires in n weeks
+      <n>m = key expires in n months
+      <n>y = key expires in n years
+Key is valid for? (0)g
+Key does not expire at all
+Is this correct? (y/N)g
+```
+
+In this example we have a 4096 bit key that does not expire.  Answer y to
+proceed.  You will then faced with some prompts for identity information.
+Note, the output of gpg differs from that of gpg2 here, but the prompts are
+fundamentally the same.
+
+```
+Is this correct? (y/N) y
+
+GnuPG needs to construct a user ID to identify your key.
+
+Real name: T. Joseph Carter
+Email address: tjcarter@blocksfree.com
+Comment:g
+You selected this USER-ID:
+    "T. Joseph Carter <tjcarter@blocksfree.com>"
+
+Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit?g
+```
+
+The one bit of advice here is **DO NOT PUT ANYTHING IN THE COMMENT FIELD**.
+If you want to read why, check [this article][gpg-comment-harmful] for
+details.  Just don't do it.
+
+[gpg-comment-harmful]: https://www.debian-administration.org/users/dkg/weblog/97
+
+Anyway, press the "O" key to continue.
+
+Now at this point it will ask you about a passphrase to protect your key.
+Because this key is being created on a Mac using gpg2, this prompt was a GUI
+dialog box using a program called pinentry.  Here's the rest of the output of
+gpg2 on a Mac:
+
+```
+You need a Passphrase to protect your secret key.
+
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+We need to generate a lot of random bytes. It is a good idea to perform
+some other action (type on the keyboard, move the mouse, utilize the
+disks) during the prime generation; this gives the random number
+generator a better chance to gain enough entropy.
+gpg: /Users/tjcarter/.gnupg/trustdb.gpg: trustdb created
+gpg: key 524871B7 marked as ultimately trusted
+public and secret key created and signed.
+
+gpg: checking the trustdb
+gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
+gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
+pub   4096R/524871B7 2015-12-03
+      Key fingerprint = 70DF E8D1 BCE5 FB1F 2D60  6849 B760 86FD 5248 71B7
+uid       [ultimate] T. Joseph Carter <tjcarter@blocksfree.com>
+sub   4096R/AEB489D7 2015-12-03
+```
+
+The other major difference is that gpg1 would've spit out some punctuation
+while it was working.  On Linux systems, you will doubtless run out of entropy
+pretty quickly and the key creation process will stall.  Go browse some
+websites or something for awhile.  The act of using your computer will
+eventually generate enough random bytes to finish creating your key.
+
+For the record, you will not find this key (524871B7 or AEB489D7) in any
+public keyring or on any public server.  It no longer exists.
+
