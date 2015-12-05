@@ -1,7 +1,9 @@
-# GnuPG mini-HOWTO for Raspple II users
+GnuPG mini-HOWTO for Raspple II users
+=====================================
 
 
-## Understanding how public key encryption works
+Understanding how public key encryption works
+---------------------------------------------
 
 You don't actually have to understand the complex mathematics or have
 discussions about Alice and Bob and Charlie to understand how public key
@@ -110,7 +112,8 @@ less his identity?  Some argue it would.  Your author is not one of those
 people.
 
 
-## Keys 101
+Keys 101
+--------
 
 Before you can do anything with GnuPG, you need a key.  You'll notice we're
 skipping installation.  On a Linux box, you'll likely use your Linux package
