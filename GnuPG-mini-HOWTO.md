@@ -131,6 +131,8 @@ gpg --gen-key
 ```
 
 Again, you can use `gpg2 --gen-key` as the two programs are interchangeable.
+We'll use the latest gpg 1.x for this guide but gpg2 works just as well.  They
+work the same and are developed in parallel
 Your author has gpg2 on a Mac, you can use whatever you have installed.  The
 output you'll get is almost identical, it's just that gpg2 has more
 dependencies and interconnects to other programs more easily.
@@ -138,8 +140,7 @@ dependencies and interconnects to other programs more easily.
 Here's the output on a Mac:
 
 ```
-tjcarter@amaya:~$ gpg2 --gen-key
-gpg (GnuPG) 2.0.28; Copyright (C) 2015 Free Software Foundation, Inc.
+gpg (GnuPG) 1.4.19; Copyright (C) 2015 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
@@ -153,7 +154,7 @@ Please select what kind of key you want:
    (2) DSA and Elgamal
    (3) DSA (sign only)
    (4) RSA (sign only)
-Your selection?g
+Your selection?
 ```
 
 The default is RSA for signing and RSA for encrypting.  At the time of
@@ -169,7 +170,7 @@ already.  :)
 ```
 Your selection? 1
 RSA keys may be between 1024 and 4096 bits long.
-What keysize do you want? (2048)g
+What keysize do you want? (2048)
 ```
 
 At the time of writing, 2048 is considered secure.  Something that may be
@@ -181,96 +182,134 @@ computers probably can't defeat 2048 bit RSA, barring whatever the NSA has
 under their hats.
 
 Your author is admittedly a bit paranoid and doesn't like generating new keys
-all the time, so 4096 it will be.
+all the time, so 4096 it will be.  And when we're asked about expiring after
+we enter that, we'll select the default of 0:
 
 ```
+What keysize do you want? (2048) 4096
+Requested keysize is 4096 bits
 Please specify how long the key should be valid.
          0 = key does not expire
       <n>  = key expires in n days
       <n>w = key expires in n weeks
       <n>m = key expires in n months
       <n>y = key expires in n years
-Key is valid for? (0)g
+Key is valid for? (0)
 Key does not expire at all
-Is this correct? (y/N)g
+Is this correct? (y/N)
 ```
 
 In this example we have a 4096 bit key that does not expire.  Answer y to
 proceed.  You will then faced with some prompts for identity information.
-Note, the output of gpg differs from that of gpg2 here, but the prompts are
-fundamentally the same.
+Note, the output of gpg differs from that of gpg2 here slightly.  I'll enter
+the information and then explain:
 
 ```
 Is this correct? (y/N) y
 
-GnuPG needs to construct a user ID to identify your key.
+You need a user ID to identify your key; the software constructs the user ID
+from the Real Name, Comment and Email Address in this form:
+    "Heinrich Heine (Der Dichter) <heinrichh@duesseldorf.de>"
 
-Real name: T. Joseph Carter
-Email address: tjcarter@blocksfree.com
-Comment:g
-You selected this USER-ID:
-    "T. Joseph Carter <tjcarter@blocksfree.com>"
-
-Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit?g
+Real name:
 ```
 
-The one bit of advice here is **DO NOT PUT ANYTHING IN THE COMMENT FIELD**.
-If you want to read why, check [this article][gpg-comment-harmful] for
-details.  Just don't do it.
+The info about what goes into a user ID here is different in gpg2 in that the
+only prompt you're given there is this string:
+
+```
+GnuPG needs to construct a user ID to identify your key.
+```
+
+It's still name, email address, and comment.  Use your name and primary email
+address, but **YOU SHOULD NOT PUT ANYTHING IN THE COMMENT FIELD**.  If you
+want to read why, check [this article][gpg-comment-harmful] for details.
+You're best to just leave the comment field blank.
 
 [gpg-comment-harmful]: https://www.debian-administration.org/users/dkg/weblog/97
 
-Anyway, press the "O" key to continue.
+Anyway, we'll continue by filling in the user ID fields:
+
+```
+Real name: T. Joseph Carter
+Email address: tjcarter@blocksfree.com
+Comment:
+You selected this USER-ID:
+    "T. Joseph Carter <tjcarter@blocksfree.com>"
+
+Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit?
+```
+
+This looks good.  Your author's name is correct.  The email address is the one
+used for this example.  And there is no comment.  Enter an "o" for okay and
+we're off to the next step.
 
 Now at this point it will ask you about a passphrase to protect your key.
-Because this key is being created on a Mac using gpg2, this prompt was a GUI
-dialog box using a program called pinentry.  Here's the rest of the output of
-gpg2 on a Mac:
 
 ```
 You need a Passphrase to protect your secret key.
+```
 
+See, quite predictable.  A passphrase is like a password, only it can be much
+longer.  It can be multiple words, and in fact the longer it is the better it
+protects your key.  It's actually better to use more words than a short but
+really complex password because brute force attacks against longer passwords
+take a lot longer.  The important thing to remember is:
+
+**DO NOT LOSE THE PASSPHRASE FOR YOUR KEY**
+
+If you lose it, you've lost your key.  You've lost your identity.  And that is
+another reason to use a phrase of words you will remember instead of a short
+string of gibberish including upper and lowercase, numbers, an astrological
+sign, the blood of a virgin goat, etc.  This needs to be something you won't
+forget!  But it also needs to be something else another person can't guess.
+
+If you are using gpg, it will just prompt you in the terminal window.  If you
+are using gpg2, it may give you a GUI window prompt or a curses program.  It's
+called "pinentry", and its designed by be more user-friendly.  Later on, you
+can configure what pinentry program to use for gpg2.  For the original gpg,
+what you get is what you get.
+
+Now sit back and watch your key be generated...
+
+
+```
 We need to generate a lot of random bytes. It is a good idea to perform
 some other action (type on the keyboard, move the mouse, utilize the
 disks) during the prime generation; this gives the random number
 generator a better chance to gain enough entropy.
+..............+++++
+.+++++
 We need to generate a lot of random bytes. It is a good idea to perform
 some other action (type on the keyboard, move the mouse, utilize the
 disks) during the prime generation; this gives the random number
 generator a better chance to gain enough entropy.
+.+++++
+......+++++
 gpg: /Users/tjcarter/.gnupg/trustdb.gpg: trustdb created
-gpg: key 524871B7 marked as ultimately trusted
+gpg: key FACFC8EF marked as ultimately trusted
 public and secret key created and signed.
 
 gpg: checking the trustdb
 gpg: 3 marginal(s) needed, 1 complete(s) needed, PGP trust model
 gpg: depth: 0  valid:   1  signed:   0  trust: 0-, 0q, 0n, 0m, 0f, 1u
-pub   4096R/524871B7 2015-12-03
-      Key fingerprint = 70DF E8D1 BCE5 FB1F 2D60  6849 B760 86FD 5248 71B7
-uid       [ultimate] T. Joseph Carter <tjcarter@blocksfree.com>
-sub   4096R/AEB489D7 2015-12-03
+pub   4096R/FACFC8EF 2015-12-05
+      Key fingerprint = 0C0C FFE8 3302 CF70 A3F0  9A1F 2603 E66E FACF C8EF
+uid                  T. Joseph Carter <tjcarter@blocksfree.com>
+sub   4096R/7FFEFAFA 2015-12-05
+
 ```
 
-The other major difference is that gpg1 would've spit out some punctuation
-while it was working.  On Linux systems, you will doubtless run out of entropy
-pretty quickly and the key creation process will stall.  Go browse some
-websites or something for awhile.  The act of using your computer will
-eventually generate enough random bytes to finish creating your key.
+...actually, expecially on Linux systems, don't sit back and watch.  The
+computer will probably "run out of entropy".  That means you needed more bytes
+of true random data than your computer has.  The way Linux gets random data is
+by having you do stuff with the computer and paying attention to the real
+times between keypresses, mouse movements, network accesses, etc.  So now's a
+good time to go catch up on your email, browse websites, watch cat videos on
+Facebook, whatever...
 
-For the record, you will not find this key (524871B7 or AEB489D7) in any
-public keyring or on any public server.  It no longer exists.
-
-Now, this last bit cannot be stated enough:
-
-**DO NOT LOSE THE PASSPHRASE FOR YOUR KEY**
-
-If you ever cannot remember your passphrase, your key is useless.  And note it
-is a passphrase, not a password.  It can be anything you want it to be, as
-long or as short as you're willing to type when you unlock the key.  Pick
-something memorable, but not easy to guess.  An arbitrary string of words is
-just as secure as a password including letters, numbers, punctuation, the
-blood of your first-born child, etc.  Just as long as you know it, you won't
-forget it, and nobody else knows it.  Over the years, your author has used
-passphrases ranging from song lyrics and memorable quotes to bible verses and
-arbitrarily randomly chosen words.  Whatever works for you.
+Oh, one last thing.  You'll note that the key generated above does not match
+the one you'll find on keyservers and the Raspple II archive for the indicated
+email address.  That's intentional; this key was created for this guide and
+will not be used anywhere else.
 
