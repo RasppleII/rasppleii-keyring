@@ -122,7 +122,7 @@ will be using the command-line GnuPG program, either gpg or gpg2 (it doesn't
 matter which.)
 
 
-## Creating a key
+### Creating a key
 
 Before you can do much else, you'll need a key.  Let's create one:
 
