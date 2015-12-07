@@ -311,8 +311,121 @@ times between keypresses, mouse movements, network accesses, etc.  So now's a
 good time to go catch up on your email, browse websites, watch cat videos on
 Facebook, whatever...
 
-Oh, one last thing.  You'll note that the key generated above does not match
+Oh, one last thing: Note the key ID (the pub line), you'll need it later.  In
+this example, it's `FACFC8EF`.  Sub-keys may matter later, but the main ID
+identifies it.  Also, you'll note that the key generated above does not match
 the one you'll find on keyservers and the Raspple II archive for the indicated
 email address.  That's intentional; this key was created for this guide and
 will not be used anywhere else.
 
+
+### Generating a revokation certificate
+
+Now that you've created a key, you're going to want to generate a way to
+revoke it.  You might be wondering why you'd ever want to do that, but the
+fact is that if your key is ever compromised or lost, you're going to want to
+be able to tell people to stop using it.  If you have access to your key, you
+can generate a revokation certificate at that time with a good reason and
+everything.  But what if the computer that has your secret key is stolen and
+you no longer have it to use?
+
+You do it like this:
+
+```bash
+gpg --gen-revoke FACFC8EF
+```
+
+The output you'll get:
+
+```
+
+sec  4096R/FACFC8EF 2015-12-05 T. Joseph Carter <tjcarter@blocksfree.com>
+
+Create a revocation certificate for this key? (y/N)
+```
+
+There's a confirmation step here because generating a revokation makes it
+possible to destroy the usefulness of your key.  That's exactly what we want
+in this case, so go ahead and answer y.
+
+
+```
+Create a revocation certificate for this key? (y/N) y
+Please select the reason for the revocation:
+  0 = No reason specified
+  1 = Key has been compromised
+  2 = Key is superseded
+  3 = Key is no longer used
+  Q = Cancel
+(Probably you want to select 1 here)
+Your decision?
+```
+
+At this point you don't know why you'll be using this revokation, so whether
+to select 1 or 3 is possibly unknowable.  You could generate multiple
+revokations for different reasons, but we're going to simply specify no reason
+here.
+
+
+```
+Your decision? 0
+Enter an optional description; end it with an empty line:
+>
+```
+
+A word of note: The description you supply here will be viewable to anyone
+using gpg to import this revokation we're about to generate, but it will not
+be viewable in the plain text output.  None is specified here.
+
+
+```
+Reason for revocation: No reason specified
+(No description given)
+Is this okay? (y/N)
+```
+
+Looks good, answer y to proceed.  You'll be asked for your passphrase (either
+in the terminal or (for gpg2) using pinentry.  This is the rest of the output:
+
+
+```
+Is this okay? (y/N) y
+
+You need a passphrase to unlock the secret key for
+user: "T. Joseph Carter <tjcarter@blocksfree.com>"
+4096-bit RSA key, ID FACFC8EF, created 2015-12-05
+
+Enter passphrase:
+ASCII armored output forced.
+Revocation certificate created.
+
+Please move it to a medium which you can hide away; if Mallory gets
+access to this certificate he can use it to make your key unusable.
+It is smart to print this certificate and store it away, just in case
+your media become unreadable.  But have some caution:  The print system of
+your machine might store the data and make it available to others!
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Version: GnuPG v1
+Comment: A revocation certificate should follow
+
+iQIfBCABAgAJBQJWZNAsAh0AAAoJECYD5m76z8jvRl8P/iuP3v2o4JmAhOQ2dKrF
+dw/159yJbyGdcMydht53UxByCNWxGqiKG9MhhCLzrKRNTy1yz0pXeI1skOrF3sLk
+FYwb8JNA/7qD+xjHViykrpyNDQJCWs4TQhyFh2bna9l5K5jARgepGsU1OlPi28RI
+hD6NEvXVOP9fr4q23SD6a4q5PZjdbAN7lzy0L5QwJXW7akuCLV1yfBUGoO6GJnVq
+9uPpbxj816DnvuTSq/wWcGnnq/cMZwlo0w0rOVDweTn4bpRULnPPiqEUO+rylqyj
+B3FwWEqfN+RzZmsQmpbuz7wgkvCl8IYP9yeYGHZxxTlEAAXEb8Isf7+g0MlyiN3R
+DZSlkTN/LEHPoqcwnDnFTIJ1xggng8GaX33VSk94BzYZFRjA/KcZ2IpYY+VvLUOg
+bNfx9O+oE/pH5eUuVXo4pDx/OWIcyYohVE7qq+LFGAQwQXgy5+OdFu8OXCRxIhox
+e2xfi6e77KD1PPT+V5aqn/ISZvvx9Yw9WJ+gTRdT0njhhYsZR4GNrACDvv9/DCaF
+SXyDMQI7bA4BGgsC1Pf662G5VQbtz/5jUJm2wEyhe5DhRBFcCufP7tjLXvTlDR/5
+D2JhFA0yCy2zW4Egn/XB5/PLymatulKi5hK21303+IMEej1fi97TPK8AXHIEn2+k
+A5U2uaIqz/2ItOEep6y5bQ+Q
+=zO5y
+-----END PGP PUBLIC KEY BLOCK-----
+```
+
+The PGP public key block (with delimiter lines) is the part you actually need.
+As long as you have a copy of that, you can revoke your key.  And because you
+have a copy of it for key ID FACFC8EF, you could maliciously revoke the key
+used in this guide!  Which is one reason why the example key is only used for
+this guide and nowhere else.
