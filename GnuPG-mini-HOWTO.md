@@ -129,9 +129,9 @@ matter which.)
 
 Before you can do much else, you'll need a key.  Let's create one:
 
-```bash
+~~~ bash
 gpg --gen-key
-```
+~~~
 
 Again, you can use `gpg2 --gen-key` as the two programs are interchangeable.
 We'll use the latest gpg 1.x for this guide but gpg2 works just as well.  They
@@ -142,7 +142,7 @@ dependencies and interconnects to other programs more easily.
 
 Here's the output on a Mac:
 
-```
+~~~
 gpg (GnuPG) 1.4.19; Copyright (C) 2015 Free Software Foundation, Inc.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
@@ -158,7 +158,7 @@ Please select what kind of key you want:
    (3) DSA (sign only)
    (4) RSA (sign only)
 Your selection?
-```
+~~~
 
 The default is RSA for signing and RSA for encrypting.  At the time of
 writing, that is your best bet for a secure key.  If you live in a country
@@ -170,11 +170,11 @@ Pick the RSA/RSA default and get busy overthrowing the oppressive tyrants
 already.  :)
 
 
-```
+~~~
 Your selection? 1
 RSA keys may be between 1024 and 4096 bits long.
 What keysize do you want? (2048)
-```
+~~~
 
 At the time of writing, 2048 is considered secure.  Something that may be
 useful for you to know is that barring any exploit in the algorithm, each new
@@ -188,7 +188,7 @@ Your author is admittedly a bit paranoid and doesn't like generating new keys
 all the time, so 4096 it will be.  And when we're asked about expiring after
 we enter that, we'll select the default of 0:
 
-```
+~~~
 What keysize do you want? (2048) 4096
 Requested keysize is 4096 bits
 Please specify how long the key should be valid.
@@ -200,14 +200,14 @@ Please specify how long the key should be valid.
 Key is valid for? (0)
 Key does not expire at all
 Is this correct? (y/N)
-```
+~~~
 
 In this example we have a 4096 bit key that does not expire.  Answer y to
 proceed.  You will then faced with some prompts for identity information.
 Note, the output of gpg differs from that of gpg2 here slightly.  I'll enter
 the information and then explain:
 
-```
+~~~
 Is this correct? (y/N) y
 
 You need a user ID to identify your key; the software constructs the user ID
@@ -215,14 +215,14 @@ from the Real Name, Comment and Email Address in this form:
     "Heinrich Heine (Der Dichter) <heinrichh@duesseldorf.de>"
 
 Real name:
-```
+~~~
 
 The info about what goes into a user ID here is different in gpg2 in that the
 only prompt you're given there is this string:
 
-```
+~~~
 GnuPG needs to construct a user ID to identify your key.
-```
+~~~
 
 It's still name, email address, and comment.  Use your name and primary email
 address, but **YOU SHOULD NOT PUT ANYTHING IN THE COMMENT FIELD**.  If you
@@ -233,7 +233,7 @@ You're best to just leave the comment field blank.
 
 Anyway, we'll continue by filling in the user ID fields:
 
-```
+~~~
 Real name: T. Joseph Carter
 Email address: tjcarter@blocksfree.com
 Comment:
@@ -241,7 +241,7 @@ You selected this USER-ID:
     "T. Joseph Carter <tjcarter@blocksfree.com>"
 
 Change (N)ame, (C)omment, (E)mail or (O)kay/(Q)uit?
-```
+~~~
 
 This looks good.  Your author's name is correct.  The email address is the one
 used for this example.  And there is no comment.  Enter an "o" for okay and
@@ -249,9 +249,9 @@ we're off to the next step.
 
 Now at this point it will ask you about a passphrase to protect your key.
 
-```
+~~~
 You need a Passphrase to protect your secret key.
-```
+~~~
 
 See, quite predictable.  A passphrase is like a password, only it can be much
 longer.  It can be multiple words, and in fact the longer it is the better it
@@ -276,7 +276,7 @@ what you get is what you get.
 Now sit back and watch your key be generated...
 
 
-```
+~~~
 We need to generate a lot of random bytes. It is a good idea to perform
 some other action (type on the keyboard, move the mouse, utilize the
 disks) during the prime generation; this gives the random number
@@ -301,7 +301,7 @@ pub   4096R/FACFC8EF 2015-12-05
 uid                  T. Joseph Carter <tjcarter@blocksfree.com>
 sub   4096R/7FFEFAFA 2015-12-05
 
-```
+~~~
 
 ...actually, expecially on Linux systems, don't sit back and watch.  The
 computer will probably "run out of entropy".  That means you needed more bytes
@@ -331,25 +331,25 @@ you no longer have it to use?
 
 You do it like this:
 
-```bash
+~~~ bash
 gpg --gen-revoke FACFC8EF
-```
+~~~
 
 The output you'll get:
 
-```
+~~~
 
 sec  4096R/FACFC8EF 2015-12-05 T. Joseph Carter <tjcarter@blocksfree.com>
 
 Create a revocation certificate for this key? (y/N)
-```
+~~~
 
 There's a confirmation step here because generating a revokation makes it
 possible to destroy the usefulness of your key.  That's exactly what we want
 in this case, so go ahead and answer y.
 
 
-```
+~~~
 Create a revocation certificate for this key? (y/N) y
 Please select the reason for the revocation:
   0 = No reason specified
@@ -359,7 +359,7 @@ Please select the reason for the revocation:
   Q = Cancel
 (Probably you want to select 1 here)
 Your decision?
-```
+~~~
 
 At this point you don't know why you'll be using this revokation, so whether
 to select 1 or 3 is possibly unknowable.  You could generate multiple
@@ -367,28 +367,28 @@ revokations for different reasons, but we're going to simply specify no reason
 here.
 
 
-```
+~~~
 Your decision? 0
 Enter an optional description; end it with an empty line:
 >
-```
+~~~
 
 A word of note: The description you supply here will be viewable to anyone
 using gpg to import this revokation we're about to generate, but it will not
 be viewable in the plain text output.  None is specified here.
 
 
-```
+~~~
 Reason for revocation: No reason specified
 (No description given)
 Is this okay? (y/N)
-```
+~~~
 
 Looks good, answer y to proceed.  You'll be asked for your passphrase (either
 in the terminal or (for gpg2) using pinentry.  This is the rest of the output:
 
 
-```
+~~~
 Is this okay? (y/N) y
 
 You need a passphrase to unlock the secret key for
@@ -422,7 +422,7 @@ D2JhFA0yCy2zW4Egn/XB5/PLymatulKi5hK21303+IMEej1fi97TPK8AXHIEn2+k
 A5U2uaIqz/2ItOEep6y5bQ+Q
 =zO5y
 -----END PGP PUBLIC KEY BLOCK-----
-```
+~~~
 
 The PGP public key block (with delimiter lines) is the part you actually need.
 As long as you have a copy of that, you can revoke your key.  And because you
